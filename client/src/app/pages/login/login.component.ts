@@ -31,6 +31,10 @@ export class LoginComponent implements OnInit {
     handler[type as 1 | 2]();
   }
 
+  handleGoResiter() {
+    this.router.navigate(['/register']);
+  }
+
   login() {
     if (this.email() !== '' && this.pswd() !== '') {
       const data = JSON.stringify({
