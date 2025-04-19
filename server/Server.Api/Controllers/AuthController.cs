@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.Auth.Commands;
 using Server.Application.DTOs;
@@ -15,6 +16,7 @@ public class AuthController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;
 
+    [AllowAnonymous]
     [HttpPost("[action]")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
