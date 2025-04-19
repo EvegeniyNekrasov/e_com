@@ -1,5 +1,6 @@
 
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Application.Users.Commands;
 using Server.Application.Users.Queries;
@@ -13,6 +14,7 @@ public class UserController(ISender sender) : ControllerBase
 {
     private readonly ISender _sender = sender;
 
+    [Authorize]
     [HttpGet("[action]")]
     public async Task<ActionResult<IEnumerable<User>>> GetUsers(CancellationToken ct)
     {

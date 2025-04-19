@@ -8,7 +8,14 @@ public sealed class CreateUserHandler(IUserRepository repo) : IRequestHandler<Cr
 {
     public async Task<Guid> Handle(CreateUserCommand cmd, CancellationToken ct)
     {
-        var user = new User { FirstName = cmd.FirstName, LastName = cmd.LastName, Email = cmd.Email };
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(cmd.Password);
+        var user = new User
+        {
+            FirstName = cmd.FirstName,
+            LastName = cmd.LastName,
+            Email = cmd.Email,
+            Password = hashedPassword
+        };
         await repo.AddAsync(user, ct);
         return user.Id;
     }

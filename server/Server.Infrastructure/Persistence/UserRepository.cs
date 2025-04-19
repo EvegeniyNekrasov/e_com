@@ -13,8 +13,8 @@ public class UserRepository(IConfiguration cfg) : IUserRepository
     public async Task AddAsync(User user, CancellationToken ct)
     {
         const string sql = """ 
-            INSERT INTO Users (Id, FirstName, LastName, Email, CreatedAt)
-            VALUES (@Id, @FirstName, @LastName, @Email, @CreatedAt);
+            INSERT INTO Users (Id, FirstName, LastName, Email, Password, CreatedAt)
+            VALUES (@Id, @FirstName, @LastName, @Email, @Password, @CreatedAt);
         """;
 
         await Connection.ExecuteAsync(sql, user);
@@ -28,5 +28,11 @@ public class UserRepository(IConfiguration cfg) : IUserRepository
 
     public async Task<IEnumerable<User>> ListAsync(CancellationToken ct) =>
         await Connection.QueryAsync<User>("SELECT * FROM Users");
+
+    public async Task<User?> GetUserByEmailAsync(string email) =>
+        await Connection.QuerySingleOrDefaultAsync<User>(
+            "SELECT * FROM Users WHERE Email = @Email",
+            new { Email = email }
+        );
 
 }
