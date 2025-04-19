@@ -1,14 +1,14 @@
 <div class="w-full h-full flex justify-center items-center">
   <form class="flex min-w-[400px] flex-col gap-8 p-4 bg-neutral-200" method="post">
-    <label class="flex flex-col gap-0">
+    <label for="email" class="flex flex-col gap-0">
       User
-      <input [value]="email()" class="p-2 bg-white rounded" id="user" type="text" placeholder="user..."
-        (change)="handleInput($event, 1)" />
+      <input autocomplete="off" [value]="email()" class="p-2 bg-white rounded" id="email" type="text"
+        placeholder="email..." (change)="handleInput($event, 1)" />
     </label>
-    <label class="flex flex-col gap-0">
+    <label for="password" class="flex flex-col gap-0">
       Password
-      <input [value]="pswd()" class="p-2 bg-white rounded" id="user" type="password" placeholder="password..."
-        (change)="handleInput($event, 2)" />
+      <input autocomplete="off" [value]="pswd()" class="p-2 bg-white rounded" id="password" type="password"
+        placeholder="password..." (change)="handleInput($event, 2)" />
     </label>
     <button type="button" (click)="login()"
       class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 cursor-pointer">Log in</button>

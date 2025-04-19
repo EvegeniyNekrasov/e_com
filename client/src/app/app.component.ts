@@ -1,15 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { RouterOutlet, RouterLink } from '@angular/router';
-import { HttpServiceService } from './services/http-service.service';
+import { RouterOutlet, RouterLink, Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
-
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  createdAt: string;
-}
+import { HttpServiceService } from './services/http-service.service';
 
 @Component({
   selector: 'app-root',
@@ -17,13 +9,13 @@ interface User {
   providers: [CookieService],
   templateUrl: './app.component.html',
 })
-export class AppComponent implements OnInit {
-  title = 'client';
-  http = inject(HttpServiceService);
+export class AppComponent {
+  private readonly httpService = inject(HttpServiceService);
+  private readonly router = inject(Router);
+  showHeader = () => !!this.httpService.getToken();
 
-  ngOnInit(): void {
-    this.http
-      .get<User[]>('/api/User/GetUsers')
-      .subscribe((i) => console.log(i));
+  logout() {
+    this.httpService.deleteToken();
+    this.router.navigate(['/login']);
   }
 }

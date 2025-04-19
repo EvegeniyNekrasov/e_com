@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { HttpServiceService } from '../../services/http-service.service';
 import { Router } from '@angular/router';
 
@@ -7,13 +7,19 @@ import { Router } from '@angular/router';
   imports: [],
   templateUrl: './login.component.html',
 })
-export class LoginComponent {
-  constructor(private router: Router) {}
-
-  http = inject(HttpServiceService);
+export class LoginComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly httpService = inject(HttpServiceService);
 
   email = signal<string>('');
   pswd = signal<string>('');
+
+  ngOnInit(): void {
+    const isAuth = !!this.httpService.getToken();
+    if (isAuth) {
+      this.router.navigate(['/']);
+    }
+  }
 
   handleInput(e: Event, type: number): void {
     const value = (e.target as HTMLInputElement).value;
@@ -32,14 +38,15 @@ export class LoginComponent {
         password: this.pswd(),
       });
 
-      this.http.post<any>('/api/Auth/Login', data).subscribe((response) => {
-        if (response) {
-          const { token } = response;
-          this.http.setToken(token);
-          localStorage.setItem('token', JSON.stringify({ token }));
-          // this.router.navigate(["/"]);
-        }
-      });
+      this.httpService
+        .post<any>('/api/Auth/Login', data)
+        .subscribe((response) => {
+          if (response) {
+            const { token } = response;
+            this.httpService.setToken(token);
+            this.router.navigate(['/']);
+          }
+        });
     }
   }
 }

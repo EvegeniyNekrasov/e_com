@@ -1,3 +1,4 @@
+@if(showHeader()) {
 <header>
   <nav>
     <ul>
@@ -8,7 +9,9 @@
         Blog
       </li>
     </ul>
+    <button type="button" (click)="logout()">logout</button>
   </nav>
 </header>
+}
 
 <router-outlet />
