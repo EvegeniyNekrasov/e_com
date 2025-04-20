@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpServiceService } from '../../services/http-service.service';
+import { FieldMetaRegister } from '../../types/auth.type';
 import {
   FormBuilder,
   FormGroup,
@@ -10,13 +11,6 @@ import {
 
 interface Response {
   id: string;
-}
-
-interface FieldMeta {
-  name: 'firstName' | 'lastName' | 'email' | 'password';
-  label: string;
-  type: string;
-  placeholder: string;
 }
 
 @Component({
@@ -38,7 +32,7 @@ export class RegisterComponent {
     });
   }
 
-  readonly fields: FieldMeta[] = [
+  readonly fields: FieldMetaRegister[] = [
     {
       name: 'firstName',
       label: 'First name',

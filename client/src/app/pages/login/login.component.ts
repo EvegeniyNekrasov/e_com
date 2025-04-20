@@ -1,19 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { HttpServiceService } from '../../services/http-service.service';
 import { Router } from '@angular/router';
+import { FieldMetaLogin } from '../../types/auth.type';
 import {
   FormBuilder,
   FormGroup,
   Validators,
   ReactiveFormsModule,
 } from '@angular/forms';
-
-interface FieldMeta {
-  name: 'email' | 'password';
-  label: string;
-  type: string;
-  placeholder: string;
-}
 
 @Component({
   selector: 'app-login',
@@ -32,7 +26,7 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  readonly fields: FieldMeta[] = [
+  readonly fields: FieldMetaLogin[] = [
     { name: 'email', label: 'Email', type: 'text', placeholder: 'email' },
     {
       name: 'password',
@@ -42,7 +36,7 @@ export class LoginComponent implements OnInit {
     },
   ];
 
-  ngOnInit(): void {
+  ngOnInit(): void {  
     const isAuth = !!this.httpService.getToken();
     if (isAuth) {
       this.router.navigate(['/']);
