@@ -1,18 +1,46 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HttpServiceService } from '../../services/http-service.service';
 import { Router } from '@angular/router';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
+
+interface FieldMeta {
+  name: 'email' | 'password';
+  label: string;
+  type: string;
+  placeholder: string;
+}
 
 @Component({
   selector: 'app-login',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly httpService = inject(HttpServiceService);
+  userForm!: FormGroup;
 
-  email = signal<string>('');
-  pswd = signal<string>('');
+  constructor(private formBuilder: FormBuilder) {
+    this.userForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+    });
+  }
+
+  readonly fields: FieldMeta[] = [
+    { name: 'email', label: 'Email', type: 'text', placeholder: 'email' },
+    {
+      name: 'password',
+      label: 'Password',
+      type: 'password',
+      placeholder: 'password',
+    },
+  ];
 
   ngOnInit(): void {
     const isAuth = !!this.httpService.getToken();
@@ -21,36 +49,22 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  handleInput(e: Event, type: number): void {
-    const value = (e.target as HTMLInputElement).value;
-    const handler = {
-      1: () => this.email.set(value),
-      2: () => this.pswd.set(value),
-    };
-
-    handler[type as 1 | 2]();
-  }
-
   handleGoResiter() {
     this.router.navigate(['/register']);
   }
 
   login() {
-    if (this.email() !== '' && this.pswd() !== '') {
-      const data = JSON.stringify({
-        email: this.email(),
-        password: this.pswd(),
-      });
+    if (this.userForm.invalid) return;
+    const { email, password } = this.userForm.value;
 
-      this.httpService
-        .post<any>('/api/Auth/Login', data)
-        .subscribe((response) => {
-          if (response) {
-            const { token } = response;
-            this.httpService.setToken(token);
-            this.router.navigate(['/']);
-          }
-        });
-    }
+    this.httpService
+      .post<any>('/api/Auth/Login', JSON.stringify({ email, password }))
+      .subscribe((response) => {
+        if (response) {
+          const { token } = response;
+          this.httpService.setToken(token);
+          this.router.navigate(['/']);
+        }
+      });
   }
 }

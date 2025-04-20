@@ -1,17 +1,22 @@
 <div class="w-full h-full flex justify-center items-center">
-  <form class="flex min-w-[400px] flex-col gap-8 p-4 bg-neutral-200" method="post">
-    <label for="email" class="flex flex-col gap-0">
-      User
-      <input autocomplete="off" [value]="email()" class="p-2 bg-white rounded" id="email" type="text"
-        placeholder="email..." (change)="handleInput($event, 1)" />
+  <form [formGroup]="userForm" (ngSubmit)="login()" class="flex flex-col gap-2 w-[500px] bg-neutral-100 p-4">
+    <span>Hello!</span>
+    @for(field of fields; track field.name) {
+    <label class="flex flex-col gap-1">
+      {{field.label}}
+      <input [type]="field.type" [placeholder]="field.placeholder" [formControlName]="field.name"
+        class="p-2 bg-white rounded" />
     </label>
-    <label for="password" class="flex flex-col gap-0">
-      Password
-      <input autocomplete="off" [value]="pswd()" class="p-2 bg-white rounded" id="password" type="password"
-        placeholder="password..." (change)="handleInput($event, 2)" />
-    </label>
-    <button type="button" (click)="login()"
-      class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 cursor-pointer">Log in</button>
-    <button type="button" (click)="handleGoResiter()">Don't have an account</button>
+    }
+
+    <button class="bg-blue-500 p-2 text-white rounded hover:bg-blue-600 disabled:bg-blue-300" type="submit"
+      [disabled]="userForm.invalid">
+      Login
+    </button>
+
+    <button type="button" (click)="handleGoResiter()">
+      Don't have an account?
+    </button>
+
   </form>
 </div>
