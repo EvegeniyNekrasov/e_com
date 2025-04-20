@@ -1,30 +1,22 @@
-<div class="w-full h-full flex items-center justify-center">
-  <div class="flex flex-col min-w-[500px] gap-2 bg-neutral-300 p-2">
-    <label class="flex flex-col">
-      First name
-      <input [value]="firstName()" class="p-2 bg-white rounded" (change)="handleInput($event, 1)" type="text"
-        placeholder="first name" />
+<div class="w-full h-full flex justify-center items-center">
+  <form [formGroup]="userForm" (ngSubmit)="register()" class="flex flex-col gap-2 w-[500px] bg-neutral-100 p-4">
+    <span>Hello!</span>
+    @for(field of fields; track field.name) {
+    <label class="flex flex-col gap-1">
+      {{field.label}}
+      <input [type]="field.type" [placeholder]="field.placeholder" [formControlName]="field.name"
+        class="p-2 bg-white rounded" />
     </label>
+    }
 
-    <label class="flex flex-col">
-      Last name
-      <input [value]="lastName()" class="p-2 bg-white rounded" (change)="handleInput($event, 2)" type="text"
-        placeholder="last name" />
-    </label>
+    <button class="bg-blue-500 p-2 text-white rounded hover:bg-blue-600 disabled:bg-blue-300" type="submit"
+      [disabled]="userForm.invalid">
+      Register
+    </button>
 
-    <label class="flex flex-col">
-      Email name
-      <input [value]="email()" class="p-2 bg-white rounded" (change)="handleInput($event, 3)" type="text"
-        placeholder="email" />
-    </label>
+    <button type="button" (click)="handleGoLogin()">
+      Already have an account
+    </button>
 
-    <label class="flex flex-col">
-      Password
-      <input [value]="password()" class="p-2 bg-white rounded" (change)="handleInput($event, 4)" type="password"
-        placeholder="password" />
-    </label>
-
-    <button type="button" (click)="register()">Register</button>
-    <button type="button" (click)="handleGoLogin()">Already have account</button>
-  </div>
+  </form>
 </div>

@@ -1,59 +1,84 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpServiceService } from '../../services/http-service.service';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+} from '@angular/forms';
 
-interface Register {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
+interface Response {
+  id: string;
+}
+
+interface FieldMeta {
+  name: 'firstName' | 'lastName' | 'email' | 'password';
+  label: string;
+  type: string;
+  placeholder: string;
 }
 
 @Component({
   selector: 'app-register',
-  imports: [],
+  imports: [ReactiveFormsModule],
   templateUrl: './register.component.html',
 })
 export class RegisterComponent {
   private readonly router = inject(Router);
   private readonly httpService = inject(HttpServiceService);
+  userForm!: FormGroup;
 
-  firstName = signal<string>('');
-  lastName = signal<string>('');
-  email = signal<string>('');
-  password = signal<string>('');
-
-  handleInput(e: Event, type: number): void {
-    const value = (e.target as HTMLInputElement).value;
-    const handler = {
-      1: () => this.firstName.set(value),
-      2: () => this.lastName.set(value),
-      3: () => this.email.set(value),
-      4: () => this.password.set(value),
-    };
-
-    handler[type as 1 | 2 | 3 | 4]();
+  constructor(private formBuilder: FormBuilder) {
+    this.userForm = this.formBuilder.group({
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+    });
   }
+
+  readonly fields: FieldMeta[] = [
+    {
+      name: 'firstName',
+      label: 'First name',
+      type: 'text',
+      placeholder: 'first name',
+    },
+    {
+      name: 'lastName',
+      label: 'Last name',
+      type: 'text',
+      placeholder: 'last name',
+    },
+    { name: 'email', label: 'Email', type: 'text', placeholder: 'email' },
+    {
+      name: 'password',
+      label: 'Password',
+      type: 'password',
+      placeholder: 'password',
+    },
+  ];
 
   handleGoLogin() {
     this.router.navigate(['/login']);
   }
 
   register() {
-    // TODO: check if all data is not null
-    // TODO: create and sender object
-    // TODO: disbale register btn if no all data is writen
-    // TODO: disbale register btn when make first http call, and enable it on response
+    if (this.userForm.invalid) return;
+    const { firstName, lastName, email, password } = this.userForm.value;
     this.httpService
-      .post<Register>(
+      .post<Response>(
         '/api/Auth/Register',
         JSON.stringify({
-          firstName: this.firstName(),
-          lastName: this.lastName(),
-          email: this.email(),
-          password: this.password(),
+          firstName,
+          lastName,
+          email,
+          password,
         })
       )
-      .subscribe((d) => console.log(d));
+      .subscribe((response) => {
+        if (response.id) this.router.navigate(['/login']);
+      });
   }
 }
